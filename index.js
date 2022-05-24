@@ -1,6 +1,6 @@
 const express = require('express')
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
@@ -53,10 +53,14 @@ async function run() {
     await client.connect();
     const productsCollection = client.db('computer_world').collection('products');
     const userCollection = client.db('computer_world').collection('user');
+    const orderCollection = client.db('computer_world').collection('order');
 
  
 
+    
 
+
+//ger all products
     app.get('/products', async(req, res) =>{
 
       const products = await productsCollection.find().toArray()
@@ -65,6 +69,23 @@ async function run() {
 
     })
 
+    // get products by id
+
+    app.get('/products/:id', async(req , res) =>{
+            const _id = (req.params)
+            console.log(_id);
+            const query =  {_id: ObjectId(_id)}  ;
+            const result = await productsCollection.find(query).toArray();
+            res.send(result);
+    })
+
+
+    //post order
+    app.post('/order' , async(req,res)=>{
+        const order = req.body;
+        const result = await orderCollection.insertOne(order);
+        res.send({success:true , result:result});
+    })
 
 
     // user 
