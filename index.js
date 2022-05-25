@@ -9,6 +9,7 @@ require('dotenv').config()
 
 // middleware
 app.use(cors())
+
 app.use(express.json())
 
 
@@ -73,7 +74,7 @@ async function run() {
 
     app.get('/products/:id', async(req , res) =>{
             const _id = (req.params)
-            console.log(_id);
+            //console.log(_id);
             const query =  {_id: ObjectId(_id)}  ;
             const result = await productsCollection.find(query).toArray();
             res.send(result);
@@ -83,8 +84,17 @@ async function run() {
     //post order
     app.post('/order' , async(req,res)=>{
         const order = req.body;
+        //console.log(order);
         const result = await orderCollection.insertOne(order);
         res.send({success:true , result:result});
+    })
+
+    //get Order by email 
+    app.get('/order/:email', async(req , res) =>{
+         const query = req.params;
+         const result = await orderCollection.find(query).toArray();
+         res.send(result);
+
     })
 
 
