@@ -69,7 +69,7 @@ async function run() {
 
 
 //get all products
-    app.get('/products', verifyJWT, async(req, res) =>{
+    app.get('/products',  async(req, res) =>{
 
       const products = await productsCollection.find().toArray()
       res.send(products);
@@ -112,7 +112,7 @@ async function run() {
 
 
     //get Order by email for single user 
-    app.get('/order/:email', async(req , res) =>{
+    app.get('/order/:email', verifyJWT, async(req , res) =>{
          const query = req.params;
          const result = await orderCollection.find(query).toArray();
          res.send(result);
@@ -124,6 +124,16 @@ async function run() {
       const query = {};
       const result = await orderCollection.find(query).toArray();
       res.send(result);
+    })
+
+    // delete order by id 
+    app.delete('/order/:id',verifyJWT,  async(req, res) => {
+      const id = req.params;
+     // console.log(id);
+      const query =  {_id: ObjectId(id)}  ;
+      const result = await orderCollection.deleteOne(query);
+      res.send(result);
+    
     })
 
 
