@@ -69,12 +69,22 @@ async function run() {
 
 
 //get all products
-    app.get('/products', async(req, res) =>{
+    app.get('/products', verifyJWT, async(req, res) =>{
 
       const products = await productsCollection.find().toArray()
       res.send(products);
         
 
+    })
+
+    //delete products 
+    app.delete('/products/:id',verifyJWT,  async(req, res) => {
+      const id = req.params;
+    //  console.log(id);
+      const query =  {_id: ObjectId(id)}  ;
+      const result = await productsCollection.deleteOne(query);
+      res.send(result);
+    
     })
 
     // get products by id
@@ -91,17 +101,29 @@ async function run() {
     //post order
     app.post('/order' , async(req,res)=>{
         const order = req.body;
+        
         //console.log(order);
         const result = await orderCollection.insertOne(order);
-        res.send({success:true , result:result});
+        res.send(result);
     })
 
-    //get Order by email 
+
+
+
+
+    //get Order by email for single user 
     app.get('/order/:email', async(req , res) =>{
          const query = req.params;
          const result = await orderCollection.find(query).toArray();
          res.send(result);
 
+    })
+
+    //get all orders for admin
+    app.get('/order', verifyJWT, async(req, res)=>{
+      const query = {};
+      const result = await orderCollection.find(query).toArray();
+      res.send(result);
     })
 
 
@@ -126,6 +148,27 @@ async function run() {
   
       });
 
+      //put user for my profile link
+
+      
+    app.put('/profile/user/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+
+      const updateDoc = {
+        $set: user,
+      };
+
+
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+
+     
+
+      res.send( result);
+
+    });
 
       // get all user 
       app.get('/users',  async (req, res) => {
