@@ -55,12 +55,34 @@ async function run() {
     const productsCollection = client.db('computer_world').collection('products');
     const userCollection = client.db('computer_world').collection('user');
     const orderCollection = client.db('computer_world').collection('order');
+    const reviewCollection = client.db('computer_world').collection('review');
 
  
 
+
+
+    //post review 
+    app.post('/review', verifyJWT, async(req,res)=>{
+      const review = req.body;
+     //console.log(review)
+      const result = await reviewCollection.insertOne(review);
+      res.send(result);
+  })
+
+  //get review
+
+    app.get('/review' ,verifyJWT, async(req,res)=>{
+    
+      const query = {}
+      const result = await reviewCollection.find(query).toArray();
+      res.send(result);
+  })
+
+
+
     // post products
 
-    app.post('/products' , async(req,res)=>{
+    app.post('/products', verifyJWT, async(req,res)=>{
        const product = req.body;
       const result = await productsCollection.insertOne(product);
       res.send(result);
@@ -214,9 +236,7 @@ async function run() {
     })
 
 
-
-
-
+    
 
     }finally{
 
