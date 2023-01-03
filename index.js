@@ -13,7 +13,7 @@ app.use(cors())
 app.use(express.json())
 
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 10000;
 
 
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PAS}@cluster0.qotjw.mongodb.net/?retryWrites=true&w=majority`;
